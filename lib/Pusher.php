@@ -91,13 +91,13 @@ class Pusher
 		// Check for dependent PHP extensions (JSON, cURL)
 		if ( ! extension_loaded( 'curl' ) || ! extension_loaded( 'json' ) )
 		{
-			die( 'There is missing dependant extensions - please ensure both cURL and JSON modules are installed' );
+			throw new PusherException( 'There is missing dependant extensions - please ensure both cURL and JSON modules are installed' );
 		}
 
 		# Supports SHA256?
 		if ( ! in_array( 'sha256', hash_algos() ) )
 		{
-			die( 'SHA256 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.' );
+			throw new PusherException( 'SHA256 appears to be unsupported - make sure you have support for it, or upgrade your version of PHP.' );
 		}
 
 	}
@@ -120,7 +120,7 @@ class Pusher
 		$ch = curl_init();
 		if ( $ch === false )
 		{
-			die( 'Could not initialise cURL!' );
+			throw new PusherException( 'Could not initialise cURL!' );
 		}
 
 		# Add channel to URL..
@@ -220,4 +220,29 @@ class Pusher
 
 }
 
-?>
+
+class PusherException extends Exception {
+	
+	/**
+	* PHP5 Constructor. 
+	* 
+  * Initializes a new PusherException instance with message of the exception
+	* 
+	* @param string $message
+	* @param int $code
+	* @param Exception $previous
+	*/
+	
+    public function __construct($message, $code = 0, Exception $previous = null) {
+        parent::__construct($message, $code, $previous);
+    }
+
+		/**
+		* Returns the message of the exceptions
+		* @return string
+		*/
+    public function __toString() {
+        return $this->message;
+    }
+
+}
